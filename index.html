@@ -2105,12 +2105,8 @@ function buildEmailPayload() {
     subject: 'Nova Anamnese — ' + or(id.nome, 'Paciente') + ' (' + or(id.idade, '?') + ' anos)',
     from_name: 'Anamnese Digital',
     replyto: or(cont.email, ''),
-    html: html,
-    // Campos texto simples como fallback
-    nome: or(id.nome),
-    whatsapp: or(cont.whatsapp),
-    email_paciente: or(cont.email),
-    horario: or(cont.horario),
+    // "message" é o campo que o Web3Forms renderiza como HTML no email
+    message: html,
   };
 }
 
