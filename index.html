@@ -2100,34 +2100,98 @@ function buildEmailPayload() {
     '</div>'
   ].join('');
 
+  var yn = function(v) { return v ? 'Sim' : 'Não'; };
+  var or = function(v, fallback) { return v || fallback || '—'; };
+
+  var sint = d.sintomas || [];
+  var sintomasTexto = sint.length
+    ? sint.map(function(s) { return s.sintoma + (s.intensidade ? ' (' + s.intensidade + ')' : ''); }).join(', ')
+    : '—';
+
+  var hf = (d.historico && d.historico.historicoFamiliar || []).join(', ') || '—';
+
+  var lines = [
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '  ANAMNESE DIGITAL — ELIANE SOUZA',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+    '',
+    '▸ IDENTIFICAÇÃO',
+    '  Nome:          ' + or(id.nome),
+    '  Idade:         ' + or(id.idade) + ' anos',
+    '  Cidade:        ' + or(id.cidade),
+    '  Profissão:     ' + or(id.profissao),
+    '  Estado civil:  ' + or(id.estadoCivil),
+    '  Filhos:        ' + yn(id.temFilhos) + (id.temFilhos ? ' — ' + or(id.qtdFilhos) : ''),
+    '  Aborto:        ' + yn(id.teveAborto) + (id.teveAborto ? ' — ' + or(id.qtdAbortos) : ''),
+    '',
+    '▸ MOMENTO HORMONAL',
+    '  Ainda menstrua:     ' + yn(hm.menstrua),
+    '  Ciclo:              ' + or(hm.ciclo),
+    '  Última menstruação: ' + or(hm.ultimaMenstruacao),
+    '  Menopausa:          ' + yn(hm.menopausa) + (hm.menopausa ? ' — ' + or(hm.tempoMenopausa) : ''),
+    '  Precoce:            ' + yn(hm.precoce),
+    '  Reposição hormonal: ' + yn(hm.reposicao) + (hm.reposicao ? '\n    ' + or(hm.qualReposicao) : ''),
+    '',
+    '▸ SINTOMAS ATUAIS',
+    '  ' + sintomasTexto,
+    '',
+    '▸ HISTÓRICO DE SAÚDE',
+    '  Doenças:          ' + or(hist.doencas),
+    '  Cirurgias:        ' + or(hist.cirurgias),
+    '  Medicamentos:     ' + or(hist.medicamentos),
+    '  Anticoncepcional: ' + or(hist.anticoncepcional),
+    '  Histórico familiar: ' + hf,
+    '',
+    '▸ ESTILO DE VIDA',
+    '  Alimentação:   ' + or(ev.alimentacao),
+    '  Álcool:        ' + yn(ev.alcool) + (ev.alcool ? ' — ' + or(ev.alcoolFreq) : ''),
+    '  Fuma:          ' + yn(ev.fuma),
+    '  Atividade:     ' + yn(ev.atividade) + (ev.atividade ? ' — ' + or(ev.atividadeQual) + ', ' + or(ev.atividadeFreq) : ''),
+    '  Sono:          ' + or(ev.horasSono) + 'h — ' + or(ev.qualidadeSono),
+    '  Estresse:      ' + or(ev.nivelEstresse) + '/10',
+    '',
+    '▸ SAÚDE EMOCIONAL',
+    '  Estado emocional:  ' + emojiLabel(se.estabilidade),
+    '  Ansiedade:         ' + yn(se.ansiedade),
+    '  Depressão:         ' + yn(se.depressao),
+    '  Relação com corpo: ' + or(se.corpoHoje),
+    '  Autoestima:        ' + or(se.autoestima),
+    '',
+    '▸ OBJETIVO PRINCIPAL',
+    '  O que incomoda:  ' + or(obj.incomoda),
+    '  Quer melhorar:   ' + or(obj.melhorar),
+    '  O que mudaria:   ' + or(obj.mudanca),
+    '  Importância:     ' + or(obj.importancia) + '/10',
+    '',
+    '▸ EXPERIÊNCIAS ANTERIORES',
+    '  Tentou tratamento: ' + yn(exp.tentou),
+    '  O que funcionou:   ' + or(exp.funcionou),
+    '  Não funcionou:     ' + or(exp.naoFuncionou),
+    '  Por que falhou:    ' + or(exp.porQue),
+    '',
+    '▸ COMPROMISSO',
+    '  Seguir orientações: ' + yn(comp.seguirOrientacoes),
+    '  Busca:              ' + or(comp.busca),
+    '  Investir:           ' + yn(comp.investir),
+    '',
+    '▸ CONTATO',
+    '  WhatsApp: ' + or(cont.whatsapp),
+    '  E-mail:   ' + or(cont.email),
+    '  Horário:  ' + or(cont.horario),
+    '',
+    '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+  ];
+
   return {
     access_key: WEB3FORMS_KEY,
     subject: 'Nova Anamnese — ' + or(id.nome, 'Paciente') + ' (' + or(id.idade, '?') + ' anos)',
     from_name: 'Anamnese Digital',
     replyto: or(cont.email, ''),
-    // "message" é o campo que o Web3Forms renderiza como HTML no email
-    message: html,
+    message: lines.join('\n'),
   };
 }
 
-/* helpers de formatação de email */
-function section(title, rows) {
-  return [
-    '<div style="background:#FAF8F5;border-radius:12px;padding:20px;margin-bottom:16px;">',
-    '<h3 style="color:#7A9E94;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;">' + title + '</h3>',
-    '<table style="width:100%;border-collapse:collapse;">' + rows.join('') + '</table>',
-    '</div>'
-  ].join('');
-}
-
-function row(label, value) {
-  return [
-    '<tr>',
-    '<td style="padding:6px 10px 6px 0;font-size:12px;color:#A89E9A;font-weight:500;white-space:nowrap;vertical-align:top;width:40%;">' + label + '</td>',
-    '<td style="padding:6px 0;font-size:14px;color:#3D3530;vertical-align:top;">' + value + '</td>',
-    '</tr>'
-  ].join('');
-}
+/* helper de formatação de email */
 
 function emojiLabel(v) {
   var map = {'1':'😔 Muito mal','2':'😕 Mal','3':'😐 Regular','4':'🙂 Bem','5':'😊 Muito bem'};
