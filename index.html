@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Anamnese | Eliane Souza — Naturopata</title>
+
+  <!--
+    FONTE: Roboto garante compatibilidade universal em Android antigo,
+    iOS, Windows e Linux. Fallback para system-ui se não carregar.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — Eliane Souza Brand System
+    ============================================================ */
+    :root {
+      --sage:        #9BB5AC;
+      --sage-dark:   #7A9E94;
+      --sage-light:  #C5D9D4;
+      --sage-pale:   #E8F0EE;
+      --caramel:     #C4956A;
+      --caramel-dark:#A87850;
+      --caramel-pale:#F0E0CC;
+      --rose:        #D4A8A3;
+      --rose-dark:   #BC8880;
+      --rose-pale:   #F2E4E2;
+      --cream:       #F0EDE8;
+      --cream-dark:  #E6E0D8;
+      --cream-card:  #FAF8F5;
+      --text-dark:   #3D3530;
+      --text-mid:    #7A6E6A;
+      --text-light:  #A89E9A;
+      --text-muted:  #C0B8B4;
+      --white:       #FFFFFF;
+
+      /* Font stack: Roboto primeiro, depois system-ui como fallback universal */
+      --font: 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+
+      --shadow-sm:    6px 6px 12px rgba(61,53,48,.08), -4px -4px 10px rgba(255,255,255,.70);
+      --shadow-md:    10px 10px 24px rgba(61,53,48,.10), -6px -6px 18px rgba(255,255,255,.75);
+      --shadow-lg:    16px 16px 40px rgba(61,53,48,.12), -8px -8px 24px rgba(255,255,255,.80);
+      --shadow-inset: inset 4px 4px 10px rgba(61,53,48,.08), inset -3px -3px 8px rgba(255,255,255,.70);
+
+      --radius-sm:   10px;
+      --radius-md:   16px;
+      --radius-lg:   24px;
+      --radius-pill: 999px;
+      --transition:  0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.5;
+      background-color: var(--cream);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* Melhora renderização de texto em Android */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ============================================================
+       PROGRESS BAR
+    ============================================================ */
+    #progress-bar-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--cream-dark);
+      z-index: 100;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sage-dark), var(--sage), var(--sage-light));
+      width: 0%;
+      transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ============================================================
+       LAYOUT SHELL
+    ============================================================ */
+    #app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 56px 12px 80px;
+    }
+
+    /* ============================================================
+       STEP CARD
+    ============================================================ */
+    .step-card {
+      width: 100%;
+      max-width: 640px;
+      background: var(--cream-card);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      padding: 28px 20px;
+      display: none;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      /* Previne overflow de texto em Android */
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    @media (min-width: 480px) {
+      .step-card { padding: 36px 32px; border-radius: 24px; }
+      #app { padding: 60px 16px 80px; }
+    }
+
+    @media (min-width: 640px) {
+      .step-card { padding: 48px 44px; }
+    }
+
+    .step-card.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-card.slide-out {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    #step-0.step-card { text-align: center; }
+    #step-11 { text-align: center; }
+
+    /* ============================================================
+       TYPOGRAPHY — usando Roboto em todo o site
+    ============================================================ */
+    .step-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      margin-bottom: 8px;
+      font-family: var(--font);
+    }
+
+    .step-title {
+      font-family: var(--font);
+      font-size: clamp(22px, 5vw, 34px);
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 8px;
+      /* Garante quebra correta em qualquer dispositivo */
+      overflow-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .step-title strong {
+      font-weight: 500;
+      color: var(--caramel-dark);
+    }
+
+    .step-microcopy {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+
+    .step-divider {
+      width: 40px;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--sage), transparent);
+      margin: 16px 0 24px;
+    }
+
+    /* ============================================================
+       FORM FIELDS
+    ============================================================ */
+    .field-group { margin-bottom: 18px; }
+
+    .field-label {
+      display: block;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      margin-bottom: 7px;
+    }
+
+    .field-hint {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-light);
+      font-style: italic;
+      margin-top: 5px;
+      line-height: 1.5;
+      font-family: var(--font);
+    }
+
+    .field-input,
+    .field-select,
+    .field-textarea {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-dark);
+      background: var(--cream);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 13px 16px;
+      outline: none;
+      box-shadow: var(--shadow-inset);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field-input::placeholder,
+    .field-textarea::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .field-input:focus,
+    .field-select:focus,
+    .field-textarea:focus {
+      border-color: var(--sage);
+      box-shadow: var(--shadow-inset), 0 0 0 3px rgba(155,181,172,.15);
+    }
+
+    .field-input.error,
+    .field-select.error,
+    .field-textarea.error { border-color: var(--caramel); }
+
+    .error-msg {
+      font-size: 12px;
+      color: var(--caramel-dark);
+      margin-top: 5px;
+      font-style: italic;
+      font-family: var(--font);
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    .field-textarea {
+      resize: vertical;
+      min-height: 88px;
+      line-height: 1.6;
+    }
+
+    /* Custom select arrow */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--text-light);
+      pointer-events: none;
+    }
+    .field-select { padding-right: 40px; cursor: pointer; }
+
+    /* Two-column grid */
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 400px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       TOGGLE SWITCH
+    ============================================================ */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: box-shadow var(--transition);
+      gap: 12px;
+    }
+    .toggle-group:hover { box-shadow: var(--shadow-md); }
+
+    .toggle-label-text {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-dark);
+      line-height: 1.4;
+      flex: 1;
+      min-width: 0; /* Previne overflow */
+    }
+
+    .toggle-label-sub {
+      font-size: 11px;
+      color: var(--text-light);
+      font-style: italic;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 25px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--cream-dark);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-inset);
+      transition: background var(--transition);
+      cursor: pointer;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 19px; height: 19px;
+      background: var(--white);
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      box-shadow: 2px 2px 5px rgba(61,53,48,.15);
+      transition: transform var(--transition);
+    }
+    .toggle-switch input:checked + .toggle-track {
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+    }
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(21px);
+    }
+
+    /* ============================================================
+       RADIO PILLS
+    ============================================================ */
+    .radio-pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .radio-pill input[type="radio"] { display: none; }
+    .radio-pill label {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-mid);
+      background: var(--cream);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .radio-pill label:hover { box-shadow: var(--shadow-md); }
+    .radio-pill input:checked + label {
+      background: var(--sage);
+      color: var(--white);
+      box-shadow: 4px 4px 12px rgba(155,181,172,.4), -2px -2px 8px rgba(255,255,255,.6);
+    }
+
+    /* ============================================================
+       RANGE SLIDER
+    ============================================================ */
+    .range-wrap { padding: 6px 2px; }
+    .range-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .range-value {
+      font-family: var(--font);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--sage-dark);
+      line-height: 1;
+    }
+    .range-unit { font-size: 12px; color: var(--text-light); font-family: var(--font); }
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: var(--font);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background: var(--cream-dark);
+      box-shadow: var(--shadow-inset);
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      box-shadow: 3px 3px 8px rgba(122,158,148,.4), -2px -2px 6px rgba(255,255,255,.6);
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       SYMPTOM CARDS — corrigido overflow de texto
+    ============================================================ */
+    .symptoms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    @media (min-width: 480px) {
+      .symptoms-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    }
+
+    .symptom-card {
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 14px 12px 12px;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+      user-select: none;
+      position: relative;
+      /* Importante: contém o conteúdo */
+      overflow: hidden;
+      min-width: 0;
+    }
+    .symptom-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .symptom-card.selected {
+      border-color: var(--sage);
+      box-shadow: 6px 6px 18px rgba(155,181,172,.25), -3px -3px 12px rgba(255,255,255,.8);
+    }
+
+    .symptom-icon {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 5px;
+      line-height: 1;
+    }
+
+    .symptom-name {
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1.3;
+      /* Garante que não transborde */
+      word-break: break-word;
+      overflow-wrap: break-word;
+      padding-right: 22px; /* Espaço para o check */
+    }
+
+    .symptom-check {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      background: var(--cream-dark);
+      box-shadow: var(--shadow-inset);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .symptom-card.selected .symptom-check {
+      background: var(--sage);
+      box-shadow: 2px 2px 6px rgba(122,158,148,.4);
+    }
+    .symptom-check svg {
+      width: 9px; height: 9px;
+      stroke: var(--white);
+      opacity: 0;
+      transform: scale(0);
+      transition: all var(--transition);
+    }
+    .symptom-card.selected .symptom-check svg { opacity: 1; transform: scale(1); }
+
+    /* Intensity buttons — dentro do card, sem overflow */
+    .symptom-intensity {
+      display: none;
+      margin-top: 8px;
+      gap: 3px;
+      /* Flex wrap garante que não transborde */
+      flex-wrap: wrap;
+    }
+    .symptom-card.selected .symptom-intensity { display: flex; }
+
+    .intensity-btn {
+      flex: 1 1 auto;
+      min-width: 0;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 4px 3px;
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--cream-dark);
+      color: var(--text-light);
+      transition: all var(--transition);
+      box-shadow: 2px 2px 5px rgba(61,53,48,.06), -1px -1px 4px rgba(255,255,255,.6);
+      /* Evita que o texto quebre */
+      white-space: nowrap;
+      text-align: center;
+    }
+    .intensity-btn:hover { transform: translateY(-1px); }
+    .intensity-btn.leve.active    { background: var(--sage-pale); color: var(--sage-dark); }
+    .intensity-btn.moderado.active { background: var(--caramel-pale); color: var(--caramel-dark); }
+    .intensity-btn.intenso.active  { background: var(--rose-pale); color: var(--rose-dark); }
+
+    /* ============================================================
+       EMOJI SCALE (Saúde Emocional)
+    ============================================================ */
+    .emoji-scale {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+    .emoji-scale input { display: none; }
+    .emoji-scale label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 10px 6px;
+      border-radius: var(--radius-md);
+      background: var(--cream);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition);
+      flex: 1;
+      border: 1.5px solid transparent;
+    }
+    .emoji-scale label:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .emoji-scale input:checked + label {
+      border-color: var(--sage);
+      background: var(--sage-pale);
+    }
+    .emoji-scale .emoji { font-size: 22px; }
+    .emoji-scale .emoji-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-align: center;
+      font-family: var(--font);
+      line-height: 1.2;
+    }
+
+    /* ============================================================
+       CHECKBOX PILLS
+    ============================================================ */
+    .checkbox-pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .checkbox-pill input[type="checkbox"] { display: none; }
+    .checkbox-pill label {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-mid);
+      background: var(--cream);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+      user-select: none;
+    }
+    .checkbox-pill label:hover { box-shadow: var(--shadow-md); }
+    .checkbox-pill input:checked + label {
+      background: var(--caramel-pale);
+      color: var(--caramel-dark);
+      border-color: var(--caramel);
+    }
+
+    /* ============================================================
+       NAVIGATION BUTTONS
+    ============================================================ */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 32px;
+      align-items: center;
+    }
+
+    .btn-back {
+      flex-shrink: 0;
+      background: transparent;
+      border: 1.5px solid var(--caramel);
+      border-radius: var(--radius-pill);
+      padding: 12px 22px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--caramel-dark);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-back:hover { background: var(--caramel-pale); box-shadow: var(--shadow-sm); }
+
+    .btn-next {
+      flex: 1;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 14px 28px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--white);
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 6px 6px 16px rgba(122,158,148,.35), -2px -2px 8px rgba(255,255,255,.4);
+    }
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 8px 10px 24px rgba(122,158,148,.45), -2px -2px 8px rgba(255,255,255,.5);
+    }
+    .btn-next:active { transform: translateY(0); }
+
+    @media (max-width: 400px) {
+      .nav-buttons { flex-direction: column-reverse; }
+      .btn-back { width: 100%; text-align: center; }
+      .btn-next { width: 100%; }
+    }
+
+    /* ============================================================
+       WELCOME SCREEN
+    ============================================================ */
+    .brand-name {
+      font-family: var(--font);
+      font-size: clamp(28px, 7vw, 46px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.15;
+    }
+    .brand-ornament {
+      width: 56px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--sage), transparent);
+      margin: 12px auto;
+    }
+    .brand-sub {
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+    }
+    .welcome-heading {
+      font-family: var(--font);
+      font-size: clamp(20px, 4.5vw, 30px);
+      font-weight: 400;
+      color: var(--text-dark);
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+    .welcome-body {
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 22px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .welcome-features {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      background: var(--cream);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-inset);
+      margin: 20px 0 28px;
+    }
+    .welcome-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+    .welcome-feature-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--sage);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .btn-welcome {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 16px 44px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--white);
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 8px 8px 20px rgba(122,158,148,.4), -3px -3px 10px rgba(255,255,255,.5);
+    }
+    .btn-welcome:hover {
+      transform: translateY(-3px);
+      box-shadow: 10px 14px 28px rgba(122,158,148,.5), -3px -3px 10px rgba(255,255,255,.5);
+    }
+
+    /* ============================================================
+       CONDITIONAL FIELDS
+    ============================================================ */
+    .conditional-field {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+      margin-top: 0;
+    }
+    .conditional-field.visible { max-height: 260px; opacity: 1; margin-top: 14px; }
+    .conditional-field.visible.large { max-height: 600px; }
+
+    /* ============================================================
+       SECTION SEPARATORS
+    ============================================================ */
+    .section-sep {
+      margin: 24px 0;
+      border: none;
+      border-top: 1px solid var(--cream-dark);
+    }
+    .section-mini-title {
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+
+    /* ============================================================
+       IMPORTANCE SLIDER
+    ============================================================ */
+    .importance-wrap { text-align: center; padding: 12px 0; }
+    .importance-heart { font-size: 44px; display: block; margin-bottom: 6px; }
+    .importance-num {
+      font-family: var(--font);
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--rose-dark);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .importance-label {
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 14px;
+    }
+    input[type="range"].importance-slider::-webkit-slider-thumb {
+      background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+    }
+    input[type="range"].importance-slider::-moz-range-thumb {
+      background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+    }
+
+    /* ============================================================
+       COMMITMENT CARD
+    ============================================================ */
+    .commitment-card {
+      background: linear-gradient(135deg, var(--sage-pale), var(--cream-card));
+      border-radius: var(--radius-md);
+      border: 1px solid var(--sage-light);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    /* ============================================================
+       CONTACT / PRIVACY
+    ============================================================ */
+    .input-prefix-wrap {
+      display: flex;
+      align-items: stretch;
+    }
+    .input-prefix {
+      background: var(--cream);
+      box-shadow: var(--shadow-inset);
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+      padding: 13px 12px 13px 16px;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text-mid);
+      border: 1.5px solid transparent;
+      border-right: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .input-prefix-wrap .field-input {
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+    .privacy-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--sage-pale);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--sage);
+      margin-top: 18px;
+      font-family: var(--font);
+      font-size: 12px;
+      color: var(--text-mid);
+      line-height: 1.55;
+    }
+    .privacy-note-icon { font-size: 15px; flex-shrink: 0; padding-top: 1px; }
+
+    /* ============================================================
+       CONFIRMATION SCREEN
+    ============================================================ */
+    .success-anim {
+      width: 84px; height: 84px;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      box-shadow: 8px 8px 24px rgba(122,158,148,.4), -4px -4px 14px rgba(255,255,255,.6);
+      animation: successPulse 2s ease infinite;
+    }
+    @keyframes successPulse {
+      0%, 100% { box-shadow: 8px 8px 24px rgba(122,158,148,.4), -4px -4px 14px rgba(255,255,255,.6); }
+      50%        { box-shadow: 12px 12px 32px rgba(122,158,148,.55), -4px -4px 14px rgba(255,255,255,.7); }
+    }
+    .success-check {
+      width: 34px; height: 34px;
+      stroke: white;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawCheck 0.8s ease 0.2s forwards;
+    }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .confirm-title {
+      font-family: var(--font);
+      font-size: clamp(24px, 5.5vw, 38px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 18px;
+    }
+    .confirm-msg {
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.75;
+      max-width: 460px;
+      margin: 0 auto 22px;
+    }
+    .confirm-closing {
+      font-family: var(--font);
+      font-size: 16px;
+      font-style: italic;
+      color: var(--caramel);
+    }
+
+    /* Number input — sem setas */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* ============================================================
+       LOADING STATE
+    ============================================================ */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+    .btn-loading::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Erro de envio */
+    .send-error {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--rose-pale);
+      border-left: 3px solid var(--rose-dark);
+      border-radius: var(--radius-md);
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--rose-dark);
+      line-height: 1.5;
+    }
+    .send-error.visible { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Barra de progresso fixa no topo -->
+<div id="progress-bar-wrap">
+  <div id="progress-bar"></div>
+</div>
+
+<div id="app">
+
+  <!-- ============================================================
+       STEP 0 — BEM-VINDA
+  ============================================================ -->
+  <div class="step-card active" id="step-0">
+    <div style="margin-bottom:28px;">
+      <div class="brand-name">Eliane Souza</div>
+      <div class="brand-ornament"></div>
+      <div class="brand-sub">Naturopata</div>
+    </div>
+
+    <h1 class="welcome-heading">Olá, que bom ter você aqui.</h1>
+
+    <p class="welcome-body">
+      Este espaço foi criado com cuidado para que você possa compartilhar como está se sentindo de forma tranquila e segura. Cada resposta nos ajuda a entender melhor o seu momento e oferecer o cuidado que você merece.
+    </p>
+
+    <div class="welcome-features">
+      <div class="welcome-feature">
+        <div class="welcome-feature-dot"></div>
+        <span>Cerca de 10 minutos para preencher</span>
+      </div>
+      <div class="welcome-feature">
+        <div class="welcome-feature-dot"></div>
+        <span>Seus dados são tratados com total sigilo</span>
+      </div>
+      <div class="welcome-feature">
+        <div class="welcome-feature-dot"></div>
+        <span>Você pode pausar e retomar quando quiser</span>
+      </div>
+      <div class="welcome-feature">
+        <div class="welcome-feature-dot"></div>
+        <span>Não existe resposta certa ou errada — seja honesta</span>
+      </div>
+    </div>
+
+    <button class="btn-welcome" onclick="goTo(1)">Começar minha anamnese</button>
+  </div>
+
+  <!-- ============================================================
+       STEP 1 — IDENTIFICAÇÃO
+  ============================================================ -->
+  <div class="step-card" id="step-1">
+    <div class="step-label">Etapa 1 de 10</div>
+    <h2 class="step-title">Vamos começar<br><strong>nos conhecendo</strong></h2>
+    <p class="step-microcopy">Conte um pouco sobre você</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">Nome completo *</label>
+      <input type="text" class="field-input" id="f-nome" placeholder="Seu nome completo" autocomplete="name">
+      <div class="error-msg" id="e-nome">Por favor, informe seu nome.</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Idade *</label>
+        <input type="number" class="field-input" id="f-idade" placeholder="Ex: 48" min="18" max="99">
+        <div class="error-msg" id="e-idade">Informe sua idade.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Estado civil</label>
+        <div class="select-wrap">
+          <select class="field-select" id="f-estado-civil">
+            <option value="">Selecione</option>
+            <option>Solteira</option>
+            <option>Casada</option>
+            <option>União estável</option>
+            <option>Divorciada</option>
+            <option>Viúva</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Cidade / Estado</label>
+      <input type="text" class="field-input" id="f-cidade" placeholder="Ex: São Paulo, SP">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Profissão</label>
+      <input type="text" class="field-input" id="f-profissao" placeholder="Qual é sua profissão?">
+    </div>
+
+    <!-- Filhos -->
+    <label class="toggle-group" for="f-filhos">
+      <div class="toggle-label-text">
+        Tem filhos?
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-filhos" onchange="toggleField('f-filhos','cf-qtd-filhos')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field" id="cf-qtd-filhos">
+      <div class="field-group">
+        <label class="field-label">Quantos filhos?</label>
+        <input type="number" class="field-input" id="f-qtd-filhos" placeholder="Ex: 2" min="0" max="20">
+      </div>
+    </div>
+
+    <!-- Aborto — adicionado conforme solicitado -->
+    <label class="toggle-group" for="f-aborto">
+      <div class="toggle-label-text">
+        Já sofreu algum aborto?
+        <span class="toggle-label-sub">Espontâneo ou induzido</span>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-aborto" onchange="toggleField('f-aborto','cf-qtd-aborto')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field" id="cf-qtd-aborto">
+      <div class="field-group">
+        <label class="field-label">Quantos abortos?</label>
+        <input type="number" class="field-input" id="f-qtd-aborto" placeholder="Ex: 1" min="1" max="20">
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-next" onclick="nextStep(1)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 2 — MOMENTO HORMONAL
+  ============================================================ -->
+  <div class="step-card" id="step-2">
+    <div class="step-label">Etapa 2 de 10</div>
+    <h2 class="step-title">Seu momento<br><strong>hormonal</strong></h2>
+    <p class="step-microcopy">Essas informações nos ajudam a entender melhor o que seu corpo está vivendo</p>
+    <div class="step-divider"></div>
+
+    <label class="toggle-group" for="f-menstrua">
+      <div class="toggle-label-text">Você ainda menstrua?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-menstrua" onchange="toggleField('f-menstrua','cf-ciclo')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field" id="cf-ciclo">
+      <div class="field-group">
+        <label class="field-label">Seu ciclo é</label>
+        <div class="radio-pill-group">
+          <div class="radio-pill"><input type="radio" name="ciclo" id="ciclo-r" value="Regular"><label for="ciclo-r">Regular</label></div>
+          <div class="radio-pill"><input type="radio" name="ciclo" id="ciclo-i" value="Irregular"><label for="ciclo-i">Irregular</label></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group" style="margin-top:4px;">
+      <label class="field-label">Data da última menstruação</label>
+      <input type="date" class="field-input" id="f-ultima-menstruacao">
+    </div>
+
+    <label class="toggle-group" for="f-menopausa">
+      <div class="toggle-label-text">Já está na menopausa?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-menopausa" onchange="toggleField('f-menopausa','cf-tempo-menopausa')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field" id="cf-tempo-menopausa">
+      <div class="field-group">
+        <label class="field-label">Há quanto tempo?</label>
+        <input type="text" class="field-input" id="f-tempo-menopausa" placeholder="Ex: 2 anos, 6 meses...">
+      </div>
+    </div>
+
+    <label class="toggle-group" for="f-precoce">
+      <div class="toggle-label-text">Teve menopausa precoce?<span class="toggle-label-sub">Antes dos 40 anos</span></div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-precoce">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <label class="toggle-group" for="f-reposicao">
+      <div class="toggle-label-text">Já fez reposição hormonal?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-reposicao" onchange="toggleField('f-reposicao','cf-qual-reposicao')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field large" id="cf-qual-reposicao">
+      <div class="field-group">
+        <label class="field-label">Qual reposição e por quanto tempo?</label>
+        <textarea class="field-textarea" id="f-qual-reposicao" placeholder="Descreva o tipo de hormônio usado e o período..."></textarea>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(2)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(2)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 3 — SINTOMAS
+  ============================================================ -->
+  <div class="step-card" id="step-3">
+    <div class="step-label">Etapa 3 de 10</div>
+    <h2 class="step-title">Como você está<br><strong>se sentindo</strong></h2>
+    <p class="step-microcopy">Selecione os sintomas que sente e a intensidade de cada um</p>
+    <div class="step-divider"></div>
+
+    <div class="symptoms-grid" id="symptoms-grid"></div>
+
+    <p class="field-hint" style="margin-top:6px;">Toque no sintoma para selecioná-lo e depois escolha a intensidade.</p>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(3)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(3)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 4 — HISTÓRICO DE SAÚDE
+  ============================================================ -->
+  <div class="step-card" id="step-4">
+    <div class="step-label">Etapa 4 de 10</div>
+    <h2 class="step-title">Histórico<br><strong>de saúde</strong></h2>
+    <p class="step-microcopy">Informações que nos ajudam a cuidar de você com segurança</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">Doenças diagnosticadas</label>
+      <textarea class="field-textarea" id="f-doencas" placeholder="Liste quaisquer diagnósticos que já recebeu..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Cirurgias anteriores</label>
+      <textarea class="field-textarea" id="f-cirurgias" placeholder="Se não teve cirurgias, pode deixar em branco..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Medicamentos em uso</label>
+      <textarea class="field-textarea" id="f-medicamentos" placeholder="Liste todos os medicamentos que usa atualmente..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Histórico de uso de anticoncepcional</label>
+      <textarea class="field-textarea" id="f-anticoncepcional" placeholder="Por quanto tempo usou? Quando parou?"></textarea>
+    </div>
+
+    <hr class="section-sep">
+    <div class="section-mini-title">Histórico familiar</div>
+    <p class="field-hint" style="margin-bottom:12px;">Selecione o que existe no histórico da sua família</p>
+
+    <div class="checkbox-pill-group" id="historico-familiar">
+      <div class="checkbox-pill"><input type="checkbox" id="hf-cancer" value="Câncer"><label for="hf-cancer">Câncer</label></div>
+      <div class="checkbox-pill"><input type="checkbox" id="hf-diabetes" value="Diabetes"><label for="hf-diabetes">Diabetes</label></div>
+      <div class="checkbox-pill"><input type="checkbox" id="hf-hipertensao" value="Hipertensão"><label for="hf-hipertensao">Hipertensão</label></div>
+      <div class="checkbox-pill"><input type="checkbox" id="hf-hormonal" value="Doenças hormonais"><label for="hf-hormonal">Doenças hormonais</label></div>
+      <div class="checkbox-pill"><input type="checkbox" id="hf-outros" value="Outros" onchange="toggleField('hf-outros','cf-hf-outros')"><label for="hf-outros">Outros</label></div>
+    </div>
+
+    <div class="conditional-field" id="cf-hf-outros">
+      <div class="field-group">
+        <label class="field-label">Quais outros?</label>
+        <input type="text" class="field-input" id="f-hf-outros" placeholder="Descreva...">
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(4)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(4)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 5 — ESTILO DE VIDA
+  ============================================================ -->
+  <div class="step-card" id="step-5">
+    <div class="step-label">Etapa 5 de 10</div>
+    <h2 class="step-title">Seu<br><strong>estilo de vida</strong></h2>
+    <p class="step-microcopy">Seu dia a dia nos conta muito sobre como podemos te ajudar</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">Como é sua alimentação atualmente?</label>
+      <div class="select-wrap">
+        <select class="field-select" id="f-alimentacao">
+          <option value="">Selecione</option>
+          <option>Muito saudável</option>
+          <option>Razoável</option>
+          <option>Poderia melhorar</option>
+          <option>Bastante desequilibrada</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="toggle-group" for="f-alcool">
+      <div class="toggle-label-text">Consome bebidas alcoólicas?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-alcool" onchange="toggleField('f-alcool','cf-alcool-freq')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+    <div class="conditional-field" id="cf-alcool-freq">
+      <div class="field-group">
+        <label class="field-label">Com que frequência?</label>
+        <div class="select-wrap">
+          <select class="field-select" id="f-alcool-freq">
+            <option value="">Selecione</option>
+            <option>Raramente</option>
+            <option>Fins de semana</option>
+            <option>Algumas vezes por semana</option>
+            <option>Diariamente</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <label class="toggle-group" for="f-fuma">
+      <div class="toggle-label-text">Fuma?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-fuma">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <label class="toggle-group" for="f-atividade">
+      <div class="toggle-label-text">Pratica atividade física?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-atividade" onchange="toggleField('f-atividade','cf-atividade-detalhe')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+    <div class="conditional-field large" id="cf-atividade-detalhe">
+      <div class="field-row" style="margin-bottom:0">
+        <div class="field-group">
+          <label class="field-label">Qual atividade?</label>
+          <input type="text" class="field-input" id="f-atividade-qual" placeholder="Ex: caminhada, yoga...">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Vezes por semana?</label>
+          <div class="select-wrap">
+            <select class="field-select" id="f-atividade-freq">
+              <option value="">Selecione</option>
+              <option>1–2 vezes</option>
+              <option>3–4 vezes</option>
+              <option>5 ou mais</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-sep">
+
+    <div class="field-group">
+      <label class="field-label">Horas de sono por noite</label>
+      <div class="range-wrap">
+        <div class="range-display">
+          <div class="range-value" id="sono-val">7</div>
+          <div class="range-unit">horas</div>
+        </div>
+        <input type="range" id="f-sono" min="4" max="12" value="7"
+               oninput="document.getElementById('sono-val').textContent=this.value">
+        <div class="range-labels"><span>4h</span><span>12h</span></div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Qualidade do sono</label>
+      <div class="radio-pill-group">
+        <div class="radio-pill"><input type="radio" name="qualidade-sono" id="qs-1" value="Péssima"><label for="qs-1">Péssima</label></div>
+        <div class="radio-pill"><input type="radio" name="qualidade-sono" id="qs-2" value="Ruim"><label for="qs-2">Ruim</label></div>
+        <div class="radio-pill"><input type="radio" name="qualidade-sono" id="qs-3" value="Regular"><label for="qs-3">Regular</label></div>
+        <div class="radio-pill"><input type="radio" name="qualidade-sono" id="qs-4" value="Boa"><label for="qs-4">Boa</label></div>
+        <div class="radio-pill"><input type="radio" name="qualidade-sono" id="qs-5" value="Ótima"><label for="qs-5">Ótima</label></div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Nível de estresse</label>
+      <div class="range-wrap">
+        <div class="range-display">
+          <div class="range-value" id="stress-val">5</div>
+          <div class="range-unit">/ 10</div>
+        </div>
+        <input type="range" id="f-stress" min="0" max="10" value="5"
+               oninput="document.getElementById('stress-val').textContent=this.value">
+        <div class="range-labels"><span>0 — Nenhum</span><span>10 — Muito alto</span></div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(5)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(5)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 6 — SAÚDE EMOCIONAL
+  ============================================================ -->
+  <div class="step-card" id="step-6">
+    <div class="step-label">Etapa 6 de 10</div>
+    <h2 class="step-title">Saúde<br><strong>emocional</strong></h2>
+    <p class="step-microcopy">Este é um espaço seguro. Responda com honestidade, sem julgamentos.</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">Como você está se sentindo emocionalmente?</label>
+      <div class="emoji-scale">
+        <div><input type="radio" name="emocional" id="em-1" value="1"><label for="em-1"><span class="emoji">😔</span><span class="emoji-label">Muito mal</span></label></div>
+        <div><input type="radio" name="emocional" id="em-2" value="2"><label for="em-2"><span class="emoji">😕</span><span class="emoji-label">Mal</span></label></div>
+        <div><input type="radio" name="emocional" id="em-3" value="3"><label for="em-3"><span class="emoji">😐</span><span class="emoji-label">Regular</span></label></div>
+        <div><input type="radio" name="emocional" id="em-4" value="4"><label for="em-4"><span class="emoji">🙂</span><span class="emoji-label">Bem</span></label></div>
+        <div><input type="radio" name="emocional" id="em-5" value="5"><label for="em-5"><span class="emoji">😊</span><span class="emoji-label">Muito bem</span></label></div>
+      </div>
+    </div>
+
+    <label class="toggle-group" for="f-ansiedade">
+      <div class="toggle-label-text">Já teve diagnóstico de ansiedade?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-ansiedade">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <label class="toggle-group" for="f-depressao">
+      <div class="toggle-label-text">Já teve diagnóstico de depressão?</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-depressao">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="field-group">
+      <label class="field-label">Como você se sente em relação ao seu corpo hoje?</label>
+      <textarea class="field-textarea" id="f-corpo" placeholder="Fique à vontade para expressar como você se sente..."></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Como essa fase tem impactado sua autoestima?</label>
+      <textarea class="field-textarea" id="f-autoestima" placeholder="Conte um pouco sobre como a menopausa tem afetado sua confiança..."></textarea>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(6)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(6)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 7 — OBJETIVO PRINCIPAL
+  ============================================================ -->
+  <div class="step-card" id="step-7">
+    <div class="step-label">Etapa 7 de 10</div>
+    <h2 class="step-title">O que<br><strong>você busca</strong></h2>
+    <p class="step-microcopy">Queremos entender o que é mais importante para você neste momento</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">O que mais te incomoda hoje? *</label>
+      <textarea class="field-textarea" id="f-incomoda" placeholder="Seja específica — isso nos ajuda muito a personalizar seu cuidado..."></textarea>
+      <div class="error-msg" id="e-incomoda">Por favor, compartilhe o que mais te incomoda.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">O que você gostaria de melhorar primeiro?</label>
+      <textarea class="field-textarea" id="f-melhorar" placeholder="Se você pudesse resolver apenas uma coisa agora, qual seria?"></textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Se o tratamento funcionasse perfeitamente, o que mudaria na sua vida?</label>
+      <textarea class="field-textarea" id="f-mudanca" placeholder="Imagine a melhor versão possível de você após o tratamento..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">O quanto isso é importante para você?</label>
+      <div class="importance-wrap">
+        <span class="importance-heart" id="importance-heart">🤍</span>
+        <div class="importance-num" id="importance-val">5</div>
+        <div class="importance-label">de 0 a 10</div>
+        <input type="range" class="importance-slider" id="f-importancia" min="0" max="10" value="5"
+               oninput="updateImportance(this.value)">
+        <div class="range-labels"><span>0 — Pouco</span><span>10 — Fundamental</span></div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(7)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(7)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 8 — EXPERIÊNCIAS ANTERIORES
+  ============================================================ -->
+  <div class="step-card" id="step-8">
+    <div class="step-label">Etapa 8 de 10</div>
+    <h2 class="step-title">Sua jornada<br><strong>até aqui</strong></h2>
+    <p class="step-microcopy">Conhecer o que você já tentou nos ajuda a encontrar um caminho mais eficaz</p>
+    <div class="step-divider"></div>
+
+    <label class="toggle-group" for="f-tentou">
+      <div class="toggle-label-text">
+        Já tentou algum tratamento para a menopausa?
+        <span class="toggle-label-sub">Natural, convencional, ou ambos</span>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-tentou" onchange="toggleField('f-tentou','cf-tratamentos')">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="conditional-field large" id="cf-tratamentos">
+      <div class="field-group">
+        <label class="field-label">O que funcionou?</label>
+        <textarea class="field-textarea" id="f-funcionou" placeholder="Mesmo que parcialmente, o que trouxe algum alívio?"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">O que não funcionou?</label>
+        <textarea class="field-textarea" id="f-nao-funcionou" placeholder="O que você já tentou sem resultado?"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Por que você acredita que não resolveu?</label>
+        <textarea class="field-textarea" id="f-por-que" placeholder="Sua percepção sobre isso é muito valiosa..."></textarea>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(8)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(8)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 9 — COMPROMISSO
+  ============================================================ -->
+  <div class="step-card" id="step-9">
+    <div class="step-label">Etapa 9 de 10</div>
+    <h2 class="step-title">Seu compromisso<br><strong>com você mesma</strong></h2>
+    <p class="step-microcopy">Para que o tratamento funcione, precisamos caminhar juntas</p>
+    <div class="step-divider"></div>
+
+    <div class="commitment-card">
+      <label class="toggle-group" for="f-orientacoes" style="background:transparent;box-shadow:none;padding:0;margin:0;">
+        <div class="toggle-label-text">
+          Está disposta a seguir orientações de alimentação e estilo de vida?
+          <span class="toggle-label-sub">Pequenas mudanças no dia a dia fazem grande diferença</span>
+        </div>
+        <div class="toggle-switch">
+          <input type="checkbox" id="f-orientacoes">
+          <div class="toggle-track"></div>
+        </div>
+      </label>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">O que você busca com esse atendimento?</label>
+      <div class="radio-pill-group" style="flex-direction:column;">
+        <div class="radio-pill"><input type="radio" name="busca" id="busca-1" value="Uma solução real e transformadora"><label for="busca-1" style="width:100%;border-radius:12px;">Uma solução real e transformadora</label></div>
+        <div class="radio-pill"><input type="radio" name="busca" id="busca-2" value="Entender melhor minha situação"><label for="busca-2" style="width:100%;border-radius:12px;">Entender melhor minha situação</label></div>
+        <div class="radio-pill"><input type="radio" name="busca" id="busca-3" value="Orientação profissional especializada"><label for="busca-3" style="width:100%;border-radius:12px;">Orientação profissional especializada</label></div>
+      </div>
+    </div>
+
+    <label class="toggle-group" for="f-investir">
+      <div class="toggle-label-text">
+        Está disposta a investir na sua saúde?
+        <span class="toggle-label-sub">Cuidar de si é o maior investimento possível</span>
+      </div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="f-investir">
+        <div class="toggle-track"></div>
+      </div>
+    </label>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(9)">← Voltar</button>
+      <button class="btn-next" onclick="nextStep(9)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 10 — DADOS DE CONTATO
+  ============================================================ -->
+  <div class="step-card" id="step-10">
+    <div class="step-label">Etapa 10 de 10</div>
+    <h2 class="step-title">Como podemos<br><strong>te encontrar</strong></h2>
+    <p class="step-microcopy">Seus dados são tratados com total sigilo e respeito</p>
+    <div class="step-divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">WhatsApp *</label>
+      <div class="input-prefix-wrap">
+        <span class="input-prefix">🇧🇷 +55</span>
+        <input type="tel" class="field-input" id="f-whatsapp"
+               placeholder="(11) 99999-9999"
+               oninput="maskPhone(this)" maxlength="15">
+      </div>
+      <div class="error-msg" id="e-whatsapp">Por favor, informe seu WhatsApp.</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">E-mail *</label>
+      <input type="email" class="field-input" id="f-email" placeholder="seu@email.com" autocomplete="email">
+      <div class="error-msg" id="e-email">Por favor, informe um e-mail válido.</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Melhor horário para contato</label>
+      <div class="select-wrap">
+        <select class="field-select" id="f-horario">
+          <option value="">Selecione o horário preferido</option>
+          <option>Manhã (8h–12h)</option>
+          <option>Tarde (12h–18h)</option>
+          <option>Noite (18h–21h)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="privacy-note">
+      <span class="privacy-note-icon">🔒</span>
+      <span>Suas informações são sigilosas e usadas exclusivamente para fins de atendimento. Eliane entrará em contato apenas pelos canais que você informou.</span>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-back" onclick="prevStep(10)">← Voltar</button>
+      <button class="btn-next" id="btn-submit" onclick="submitForm()"
+        style="background:linear-gradient(135deg,#7A9E94,#9BB5AC,#C4956A);">
+        Enviar anamnese ✓
+      </button>
+    </div>
+    <div class="send-error" id="send-error">
+      Não foi possível enviar o formulário. Verifique sua conexão e tente novamente. Se o problema persistir, entre em contato diretamente pelo WhatsApp.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 11 — CONFIRMAÇÃO
+  ============================================================ -->
+  <div class="step-card" id="step-11">
+    <div class="success-anim">
+      <svg viewBox="0 0 36 36" class="success-check">
+        <polyline points="6 18 14 26 30 10"/>
+      </svg>
+    </div>
+
+    <h2 class="confirm-title">Obrigada por compartilhar<br>sua história.</h2>
+
+    <p class="confirm-msg">
+      Com base nas suas respostas, será possível entender melhor seu momento e te direcionar com mais clareza e cuidado.<br><br>
+      Eliane entrará em contato em breve para conversar sobre os próximos passos da sua jornada — de forma personalizada e com todo o carinho que você merece.
+    </p>
+
+    <div class="brand-ornament" style="margin:0 auto 18px;"></div>
+
+    <p class="confirm-closing">Com carinho, Eliane Souza — Naturopata</p>
+  </div>
+
+</div><!-- /#app -->
+
+<script>
+/* ============================================================
+   STATE
+============================================================ */
+let currentStep = 0;
+const formData = {};
+
+/* ============================================================
+   SINTOMAS
+============================================================ */
+const symptoms = [
+  { id: 'ondas-calor',    icon: '🌡️', name: 'Ondas de calor' },
+  { id: 'suor-noturno',   icon: '💧', name: 'Suor noturno' },
+  { id: 'insonia',        icon: '🌙', name: 'Insônia' },
+  { id: 'irritabilidade', icon: '⚡',  name: 'Irritabilidade' },
+  { id: 'ansiedade',      icon: '🌀', name: 'Ansiedade' },
+  { id: 'libido',         icon: '💝', name: 'Queda de libido' },
+  { id: 'secura',         icon: '🌸', name: 'Secura vaginal' },
+  { id: 'cansaco',        icon: '🔋', name: 'Cansaço' },
+  { id: 'nevoa',          icon: '🧠', name: 'Névoa mental' },
+  { id: 'peso',           icon: '⚖️', name: 'Ganho de peso' },
+  { id: 'dores',          icon: '🦴', name: 'Dores articulares' },
+  { id: 'cabelo',         icon: '✨', name: 'Queda de cabelo' },
+];
+
+function renderSymptoms() {
+  const grid = document.getElementById('symptoms-grid');
+  grid.innerHTML = symptoms.map(s => `
+    <div class="symptom-card" id="sc-${s.id}" onclick="toggleSymptom('${s.id}')">
+      <div class="symptom-check">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor">
+          <polyline points="2 6 5 9 10 3"/>
+        </svg>
+      </div>
+      <span class="symptom-icon">${s.icon}</span>
+      <span class="symptom-name">${s.name}</span>
+      <div class="symptom-intensity">
+        <button class="intensity-btn leve"     onclick="setIntensity(event,'${s.id}','leve')">Leve</button>
+        <button class="intensity-btn moderado" onclick="setIntensity(event,'${s.id}','moderado')">Mod.</button>
+        <button class="intensity-btn intenso"  onclick="setIntensity(event,'${s.id}','intenso')">Intenso</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSymptom(id) {
+  const card = document.getElementById('sc-' + id);
+  card.classList.toggle('selected');
+  if (!card.classList.contains('selected')) {
+    card.querySelectorAll('.intensity-btn').forEach(b => b.classList.remove('active'));
+  }
+}
+
+function setIntensity(event, id, level) {
+  event.stopPropagation();
+  const card = document.getElementById('sc-' + id);
+  card.querySelectorAll('.intensity-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+/* ============================================================
+   TOGGLE HELPER
+============================================================ */
+function toggleField(checkboxId, targetId) {
+  const cb = document.getElementById(checkboxId);
+  const target = document.getElementById(targetId);
+  if (cb.checked) {
+    target.classList.add('visible');
+  } else {
+    target.classList.remove('visible');
+  }
+}
+
+/* ============================================================
+   SLIDERS
+============================================================ */
+function updateImportance(val) {
+  document.getElementById('importance-val').textContent = val;
+  const hearts = ['🤍','🤍','💛','💛','💛','🧡','🧡','❤️','❤️','❤️','💗'];
+  document.getElementById('importance-heart').textContent = hearts[val] || '💗';
+}
+
+/* ============================================================
+   PHONE MASK
+============================================================ */
+function maskPhone(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (v.length > 11) v = v.slice(0, 11);
+  if (v.length <= 10) {
+    v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  } else {
+    v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+  }
+  input.value = v.replace(/-$/, '');
+}
+
+/* ============================================================
+   PROGRESS
+============================================================ */
+function updateProgress() {
+  const pct = currentStep === 0 ? 0 : Math.round((currentStep / 10) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function goTo(step) {
+  const prevCard = document.getElementById('step-' + currentStep);
+  prevCard.classList.add('slide-out');
+  setTimeout(function() {
+    prevCard.classList.remove('active', 'slide-out');
+    prevCard.style.display = 'none';
+    currentStep = step;
+    const nextCard = document.getElementById('step-' + step);
+    nextCard.style.display = 'block';
+    setTimeout(function() {
+      nextCard.classList.add('active');
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 20);
+  }, 380);
+}
+
+function nextStep(step) {
+  if (!validateStep(step)) return;
+  collectStep(step);
+  goTo(step + 1);
+}
+
+function prevStep(step) {
+  goTo(step - 1);
+}
+
+/* ============================================================
+   VALIDATION
+============================================================ */
+function showError(fieldId, errId) {
+  var el = document.getElementById(fieldId);
+  if (el) el.classList.add('error');
+  var e = document.getElementById(errId);
+  if (e) e.classList.add('visible');
+}
+
+function clearError(fieldId, errId) {
+  var el = document.getElementById(fieldId);
+  if (el) el.classList.remove('error');
+  var e = document.getElementById(errId);
+  if (e) e.classList.remove('visible');
+}
+
+function validateStep(step) {
+  var ok = true;
+  if (step === 1) {
+    clearError('f-nome', 'e-nome');
+    clearError('f-idade', 'e-idade');
+    if (!val('f-nome')) { showError('f-nome', 'e-nome'); ok = false; }
+    if (!val('f-idade')) { showError('f-idade', 'e-idade'); ok = false; }
+  }
+  if (step === 7) {
+    clearError('f-incomoda', 'e-incomoda');
+    if (!val('f-incomoda')) { showError('f-incomoda', 'e-incomoda'); ok = false; }
+  }
+  if (step === 10) {
+    clearError('f-whatsapp', 'e-whatsapp');
+    clearError('f-email', 'e-email');
+    if (!val('f-whatsapp')) { showError('f-whatsapp', 'e-whatsapp'); ok = false; }
+    var email = val('f-email');
+    if (!email || email.indexOf('@') === -1) { showError('f-email', 'e-email'); ok = false; }
+  }
+  return ok;
+}
+
+/* ============================================================
+   COLLECT DATA
+============================================================ */
+function collectStep(step) {
+  if (step === 1) {
+    formData.identificacao = {
+      nome: val('f-nome'),
+      idade: val('f-idade'),
+      cidade: val('f-cidade'),
+      profissao: val('f-profissao'),
+      estadoCivil: val('f-estado-civil'),
+      temFilhos: checked('f-filhos'),
+      qtdFilhos: checked('f-filhos') ? val('f-qtd-filhos') : null,
+      teveAborto: checked('f-aborto'),
+      qtdAbortos: checked('f-aborto') ? val('f-qtd-aborto') : null,
+    };
+  }
+  if (step === 2) {
+    formData.momentoHormonal = {
+      menstrua: checked('f-menstrua'),
+      ciclo: radioVal('ciclo'),
+      ultimaMenstruacao: val('f-ultima-menstruacao'),
+      menopausa: checked('f-menopausa'),
+      tempoMenopausa: checked('f-menopausa') ? val('f-tempo-menopausa') : null,
+      precoce: checked('f-precoce'),
+      reposicao: checked('f-reposicao'),
+      qualReposicao: checked('f-reposicao') ? val('f-qual-reposicao') : null,
+    };
+  }
+  if (step === 3) {
+    formData.sintomas = symptoms.map(function(s) {
+      var card = document.getElementById('sc-' + s.id);
+      var selected = card.classList.contains('selected');
+      var activeBtn = card.querySelector('.intensity-btn.active');
+      return {
+        sintoma: s.name,
+        presente: selected,
+        intensidade: selected && activeBtn ? activeBtn.textContent : selected ? 'Não informada' : null,
+      };
+    }).filter(function(s) { return s.presente; });
+  }
+  if (step === 4) {
+    var hf = [];
+    document.querySelectorAll('#historico-familiar input:checked').forEach(function(cb) { hf.push(cb.value); });
+    formData.historico = {
+      doencas: val('f-doencas'),
+      cirurgias: val('f-cirurgias'),
+      medicamentos: val('f-medicamentos'),
+      anticoncepcional: val('f-anticoncepcional'),
+      historicoFamiliar: hf,
+      historicoFamiliarOutros: hf.indexOf('Outros') !== -1 ? val('f-hf-outros') : null,
+    };
+  }
+  if (step === 5) {
+    formData.estiloVida = {
+      alimentacao: val('f-alimentacao'),
+      alcool: checked('f-alcool'),
+      alcoolFreq: checked('f-alcool') ? val('f-alcool-freq') : null,
+      fuma: checked('f-fuma'),
+      atividade: checked('f-atividade'),
+      atividadeQual: checked('f-atividade') ? val('f-atividade-qual') : null,
+      atividadeFreq: checked('f-atividade') ? val('f-atividade-freq') : null,
+      horasSono: val('f-sono'),
+      qualidadeSono: radioVal('qualidade-sono'),
+      nivelEstresse: val('f-stress'),
+    };
+  }
+  if (step === 6) {
+    formData.saudeEmocional = {
+      estabilidade: radioVal('emocional'),
+      ansiedade: checked('f-ansiedade'),
+      depressao: checked('f-depressao'),
+      corpoHoje: val('f-corpo'),
+      autoestima: val('f-autoestima'),
+    };
+  }
+  if (step === 7) {
+    formData.objetivo = {
+      incomoda: val('f-incomoda'),
+      melhorar: val('f-melhorar'),
+      mudanca: val('f-mudanca'),
+      importancia: val('f-importancia'),
+    };
+  }
+  if (step === 8) {
+    formData.experiencias = {
+      tentou: checked('f-tentou'),
+      funcionou: checked('f-tentou') ? val('f-funcionou') : null,
+      naoFuncionou: checked('f-tentou') ? val('f-nao-funcionou') : null,
+      porQue: checked('f-tentou') ? val('f-por-que') : null,
+    };
+  }
+  if (step === 9) {
+    formData.compromisso = {
+      seguirOrientacoes: checked('f-orientacoes'),
+      busca: radioVal('busca'),
+      investir: checked('f-investir'),
+    };
+  }
+  if (step === 10) {
+    formData.contato = {
+      whatsapp: val('f-whatsapp'),
+      email: val('f-email'),
+      horario: val('f-horario'),
+    };
+  }
+}
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function val(id) {
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+function checked(id) {
+  var el = document.getElementById(id);
+  return el ? el.checked : false;
+}
+function radioVal(name) {
+  var el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
+/* ============================================================
+   SUBMIT + ENVIO DE EMAIL (Web3Forms)
+   ─────────────────────────────────────────────────────────────
+   CONFIGURAÇÃO:
+   1. Acesse https://web3forms.com
+   2. Digite o email da Eliane e clique em "Create Access Key"
+   3. Copie a chave gerada e substitua o valor de WEB3FORMS_KEY abaixo
+   ─────────────────────────────────────────────────────────────
+============================================================ */
+var WEB3FORMS_KEY = '396f7445-3f53-4fa3-824c-920db9a57bad'; // ← substituir pela chave do web3forms.com
+
+function submitForm() {
+  if (!validateStep(10)) return;
+  collectStep(10);
+
+  var btn = document.getElementById('btn-submit');
+  var errDiv = document.getElementById('send-error');
+  errDiv.classList.remove('visible');
+  btn.classList.add('btn-loading');
+  btn.textContent = 'Enviando';
+
+  var payload = buildEmailPayload();
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    btn.classList.remove('btn-loading');
+    if (data.success) {
+      goTo(11);
+    } else {
+      btn.textContent = 'Enviar anamnese ✓';
+      errDiv.classList.add('visible');
+      console.error('Web3Forms error:', data);
+    }
+  })
+  .catch(function(err) {
+    btn.classList.remove('btn-loading');
+    btn.textContent = 'Enviar anamnese ✓';
+    errDiv.classList.add('visible');
+    console.error('Fetch error:', err);
+  });
+}
+
+/* ============================================================
+   FORMATA OS DADOS EM HTML PARA O EMAIL
+============================================================ */
+function buildEmailPayload() {
+  var d = formData;
+  var id = d.identificacao || {};
+  var hm = d.momentoHormonal || {};
+  var sint = d.sintomas || [];
+  var hist = d.historico || {};
+  var ev = d.estiloVida || {};
+  var se = d.saudeEmocional || {};
+  var obj = d.objetivo || {};
+  var exp = d.experiencias || {};
+  var comp = d.compromisso || {};
+  var cont = d.contato || {};
+
+  var yn = function(v) { return v ? 'Sim' : 'Não'; };
+  var or = function(v, fallback) { return v || fallback || '—'; };
+
+  var sintomasHtml = sint.length
+    ? sint.map(function(s) {
+        return '<li><b>' + s.sintoma + '</b>' + (s.intensidade ? ' — ' + s.intensidade : '') + '</li>';
+      }).join('')
+    : '<li>Nenhum selecionado</li>';
+
+  var hfList = (hist.historicoFamiliar || []).join(', ') || '—';
+  if (hist.historicoFamiliarOutros) hfList += ', ' + hist.historicoFamiliarOutros;
+
+  var html = [
+    '<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#3D3530;">',
+
+    section('Identificação da Paciente', [
+      row('Nome',            or(id.nome)),
+      row('Idade',           or(id.idade)),
+      row('Cidade/Estado',   or(id.cidade)),
+      row('Profissão',       or(id.profissao)),
+      row('Estado civil',    or(id.estadoCivil)),
+      row('Tem filhos',      yn(id.temFilhos) + (id.temFilhos ? ' — ' + or(id.qtdFilhos) : '')),
+      row('Teve aborto',     yn(id.teveAborto) + (id.teveAborto ? ' — ' + or(id.qtdAbortos) + ' aborto(s)' : '')),
+    ]),
+
+    section('Momento Hormonal', [
+      row('Ainda menstrua',       yn(hm.menstrua)),
+      row('Ciclo',                or(hm.ciclo)),
+      row('Última menstruação',   or(hm.ultimaMenstruacao)),
+      row('Está na menopausa',    yn(hm.menopausa) + (hm.menopausa ? ' — ' + or(hm.tempoMenopausa) : '')),
+      row('Menopausa precoce',    yn(hm.precoce)),
+      row('Fez reposição hormonal', yn(hm.reposicao) + (hm.reposicao ? '<br><i>' + or(hm.qualReposicao) + '</i>' : '')),
+    ]),
+
+    '<div style="background:#FAF8F5;border-radius:12px;padding:20px;margin-bottom:20px;">',
+    '<h3 style="color:#7A9E94;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;">Sintomas Atuais</h3>',
+    '<ul style="margin:0;padding-left:20px;line-height:1.9;">' + sintomasHtml + '</ul>',
+    '</div>',
+
+    section('Histórico de Saúde', [
+      row('Doenças diagnosticadas',  or(hist.doencas)),
+      row('Cirurgias',               or(hist.cirurgias)),
+      row('Medicamentos em uso',     or(hist.medicamentos)),
+      row('Anticoncepcional',        or(hist.anticoncepcional)),
+      row('Histórico familiar',      hfList),
+    ]),
+
+    section('Estilo de Vida', [
+      row('Alimentação',        or(ev.alimentacao)),
+      row('Consome álcool',     yn(ev.alcool) + (ev.alcool ? ' — ' + or(ev.alcoolFreq) : '')),
+      row('Fuma',               yn(ev.fuma)),
+      row('Atividade física',   yn(ev.atividade) + (ev.atividade ? ' — ' + or(ev.atividadeQual) + ', ' + or(ev.atividadeFreq) : '')),
+      row('Horas de sono',      or(ev.horasSono) + 'h/noite'),
+      row('Qualidade do sono',  or(ev.qualidadeSono)),
+      row('Nível de estresse',  or(ev.nivelEstresse) + '/10'),
+    ]),
+
+    section('Saúde Emocional', [
+      row('Estado emocional',   emojiLabel(se.estabilidade)),
+      row('Diagnóstico ansiedade',  yn(se.ansiedade)),
+      row('Diagnóstico depressão',  yn(se.depressao)),
+      row('Relação com o corpo',    or(se.corpoHoje)),
+      row('Impacto na autoestima',  or(se.autoestima)),
+    ]),
+
+    section('Objetivo Principal', [
+      row('O que mais incomoda',     or(obj.incomoda)),
+      row('Quer melhorar primeiro',  or(obj.melhorar)),
+      row('O que mudaria na vida',   or(obj.mudanca)),
+      row('Importância (0–10)',      or(obj.importancia)),
+    ]),
+
+    section('Experiências Anteriores', [
+      row('Tentou tratamento',    yn(exp.tentou)),
+      row('O que funcionou',      or(exp.funcionou)),
+      row('O que não funcionou',  or(exp.naoFuncionou)),
+      row('Por que não resolveu', or(exp.porQue)),
+    ]),
+
+    section('Compromisso', [
+      row('Seguir orientações',  yn(comp.seguirOrientacoes)),
+      row('Busca',               or(comp.busca)),
+      row('Disposta a investir', yn(comp.investir)),
+    ]),
+
+    section('Dados de Contato', [
+      row('WhatsApp', or(cont.whatsapp)),
+      row('E-mail',   or(cont.email)),
+      row('Horário',  or(cont.horario)),
+    ]),
+
+    '<p style="margin-top:24px;font-size:12px;color:#A89E9A;text-align:center;">',
+    'Anamnese Digital — Eliane Souza Naturopata',
+    '</p>',
+    '</div>'
+  ].join('');
+
+  return {
+    access_key: WEB3FORMS_KEY,
+    subject: 'Nova Anamnese — ' + or(id.nome, 'Paciente') + ' (' + or(id.idade, '?') + ' anos)',
+    from_name: 'Anamnese Digital',
+    replyto: or(cont.email, ''),
+    html: html,
+    // Campos texto simples como fallback
+    nome: or(id.nome),
+    whatsapp: or(cont.whatsapp),
+    email_paciente: or(cont.email),
+    horario: or(cont.horario),
+  };
+}
+
+/* helpers de formatação de email */
+function section(title, rows) {
+  return [
+    '<div style="background:#FAF8F5;border-radius:12px;padding:20px;margin-bottom:16px;">',
+    '<h3 style="color:#7A9E94;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;">' + title + '</h3>',
+    '<table style="width:100%;border-collapse:collapse;">' + rows.join('') + '</table>',
+    '</div>'
+  ].join('');
+}
+
+function row(label, value) {
+  return [
+    '<tr>',
+    '<td style="padding:6px 10px 6px 0;font-size:12px;color:#A89E9A;font-weight:500;white-space:nowrap;vertical-align:top;width:40%;">' + label + '</td>',
+    '<td style="padding:6px 0;font-size:14px;color:#3D3530;vertical-align:top;">' + value + '</td>',
+    '</tr>'
+  ].join('');
+}
+
+function emojiLabel(v) {
+  var map = {'1':'😔 Muito mal','2':'😕 Mal','3':'😐 Regular','4':'🙂 Bem','5':'😊 Muito bem'};
+  return map[v] || '—';
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+document.addEventListener('DOMContentLoaded', function() {
+  renderSymptoms();
+  updateProgress();
+  updateImportance(5);
+
+  // Garante que apenas step-0 está visível
+  document.querySelectorAll('.step-card').forEach(function(card) {
+    if (!card.classList.contains('active')) {
+      card.style.display = 'none';
+    }
+  });
+});
+</script>
+</body>
+</html>
