@@ -1988,120 +1988,22 @@ function submitForm() {
 }
 
 /* ============================================================
-   FORMATA OS DADOS EM HTML PARA O EMAIL
+   FORMATA OS DADOS EM TEXTO SIMPLES PARA O EMAIL
 ============================================================ */
 function buildEmailPayload() {
   var d = formData;
-  var id = d.identificacao || {};
-  var hm = d.momentoHormonal || {};
-  var sint = d.sintomas || [];
-  var hist = d.historico || {};
-  var ev = d.estiloVida || {};
-  var se = d.saudeEmocional || {};
-  var obj = d.objetivo || {};
-  var exp = d.experiencias || {};
-  var comp = d.compromisso || {};
-  var cont = d.contato || {};
+  var id   = d.identificacao   || {};
+  var hm   = d.momentoHormonal || {};
+  var hist = d.historico       || {};
+  var ev   = d.estiloVida      || {};
+  var se   = d.saudeEmocional  || {};
+  var obj  = d.objetivo        || {};
+  var exp  = d.experiencias    || {};
+  var comp = d.compromisso     || {};
+  var cont = d.contato         || {};
 
   var yn = function(v) { return v ? 'Sim' : 'Não'; };
-  var or = function(v, fallback) { return v || fallback || '—'; };
-
-  var sintomasHtml = sint.length
-    ? sint.map(function(s) {
-        return '<li><b>' + s.sintoma + '</b>' + (s.intensidade ? ' — ' + s.intensidade : '') + '</li>';
-      }).join('')
-    : '<li>Nenhum selecionado</li>';
-
-  var hfList = (hist.historicoFamiliar || []).join(', ') || '—';
-  if (hist.historicoFamiliarOutros) hfList += ', ' + hist.historicoFamiliarOutros;
-
-  var html = [
-    '<div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#3D3530;">',
-
-    section('Identificação da Paciente', [
-      row('Nome',            or(id.nome)),
-      row('Idade',           or(id.idade)),
-      row('Cidade/Estado',   or(id.cidade)),
-      row('Profissão',       or(id.profissao)),
-      row('Estado civil',    or(id.estadoCivil)),
-      row('Tem filhos',      yn(id.temFilhos) + (id.temFilhos ? ' — ' + or(id.qtdFilhos) : '')),
-      row('Teve aborto',     yn(id.teveAborto) + (id.teveAborto ? ' — ' + or(id.qtdAbortos) + ' aborto(s)' : '')),
-    ]),
-
-    section('Momento Hormonal', [
-      row('Ainda menstrua',       yn(hm.menstrua)),
-      row('Ciclo',                or(hm.ciclo)),
-      row('Última menstruação',   or(hm.ultimaMenstruacao)),
-      row('Está na menopausa',    yn(hm.menopausa) + (hm.menopausa ? ' — ' + or(hm.tempoMenopausa) : '')),
-      row('Menopausa precoce',    yn(hm.precoce)),
-      row('Fez reposição hormonal', yn(hm.reposicao) + (hm.reposicao ? '<br><i>' + or(hm.qualReposicao) + '</i>' : '')),
-    ]),
-
-    '<div style="background:#FAF8F5;border-radius:12px;padding:20px;margin-bottom:20px;">',
-    '<h3 style="color:#7A9E94;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;">Sintomas Atuais</h3>',
-    '<ul style="margin:0;padding-left:20px;line-height:1.9;">' + sintomasHtml + '</ul>',
-    '</div>',
-
-    section('Histórico de Saúde', [
-      row('Doenças diagnosticadas',  or(hist.doencas)),
-      row('Cirurgias',               or(hist.cirurgias)),
-      row('Medicamentos em uso',     or(hist.medicamentos)),
-      row('Anticoncepcional',        or(hist.anticoncepcional)),
-      row('Histórico familiar',      hfList),
-    ]),
-
-    section('Estilo de Vida', [
-      row('Alimentação',        or(ev.alimentacao)),
-      row('Consome álcool',     yn(ev.alcool) + (ev.alcool ? ' — ' + or(ev.alcoolFreq) : '')),
-      row('Fuma',               yn(ev.fuma)),
-      row('Atividade física',   yn(ev.atividade) + (ev.atividade ? ' — ' + or(ev.atividadeQual) + ', ' + or(ev.atividadeFreq) : '')),
-      row('Horas de sono',      or(ev.horasSono) + 'h/noite'),
-      row('Qualidade do sono',  or(ev.qualidadeSono)),
-      row('Nível de estresse',  or(ev.nivelEstresse) + '/10'),
-    ]),
-
-    section('Saúde Emocional', [
-      row('Estado emocional',   emojiLabel(se.estabilidade)),
-      row('Diagnóstico ansiedade',  yn(se.ansiedade)),
-      row('Diagnóstico depressão',  yn(se.depressao)),
-      row('Relação com o corpo',    or(se.corpoHoje)),
-      row('Impacto na autoestima',  or(se.autoestima)),
-    ]),
-
-    section('Objetivo Principal', [
-      row('O que mais incomoda',     or(obj.incomoda)),
-      row('Quer melhorar primeiro',  or(obj.melhorar)),
-      row('O que mudaria na vida',   or(obj.mudanca)),
-      row('Importância (0–10)',      or(obj.importancia)),
-    ]),
-
-    section('Experiências Anteriores', [
-      row('Tentou tratamento',    yn(exp.tentou)),
-      row('O que funcionou',      or(exp.funcionou)),
-      row('O que não funcionou',  or(exp.naoFuncionou)),
-      row('Por que não resolveu', or(exp.porQue)),
-    ]),
-
-    section('Compromisso', [
-      row('Seguir orientações',  yn(comp.seguirOrientacoes)),
-      row('Busca',               or(comp.busca)),
-      row('Disposta a investir', yn(comp.investir)),
-    ]),
-
-    section('Dados de Contato', [
-      row('WhatsApp', or(cont.whatsapp)),
-      row('E-mail',   or(cont.email)),
-      row('Horário',  or(cont.horario)),
-    ]),
-
-    '<p style="margin-top:24px;font-size:12px;color:#A89E9A;text-align:center;">',
-    'Anamnese Digital — Eliane Souza Naturopata',
-    '</p>',
-    '</div>'
-  ].join('');
-
-  var yn = function(v) { return v ? 'Sim' : 'Não'; };
-  var or = function(v, fallback) { return v || fallback || '—'; };
+  var or = function(v, fb) { return v || fb || '—'; };
 
   var sint = d.sintomas || [];
   var sintomasTexto = sint.length
