@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Anamnese Eliane Souza",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "--directory", "/Users/luizvaladares/Eliane Souza"],
+      "autoPort": true
+    }
+  ]
+}
