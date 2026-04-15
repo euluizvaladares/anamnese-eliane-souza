@@ -13,7 +13,11 @@ const formData  = {};
 document.addEventListener('DOMContentLoaded', function () {
   renderTriageCards();
   renderSymptoms();
-  goTo(0);
+  // Mostra step-0 diretamente, sem animação de entrada
+  var step0 = document.getElementById('step-0');
+  step0.style.display = 'block';
+  setTimeout(function () { step0.classList.add('active'); }, 20);
+  updateProgress();
 });
 
 /* ============================================================
@@ -174,9 +178,15 @@ function updateProgress() {
 ============================================================ */
 function goTo(step) {
   var prevCard = document.getElementById('step-' + currentStep);
-  prevCard.classList.add('slide-out');
+
+  // Anima saída somente se o card estiver visível
+  if (prevCard.classList.contains('active')) {
+    prevCard.classList.add('slide-out');
+    prevCard.classList.remove('active');
+  }
+
   setTimeout(function () {
-    prevCard.classList.remove('active', 'slide-out');
+    prevCard.classList.remove('slide-out');
     prevCard.style.display = 'none';
     currentStep = step;
     var nextCard = document.getElementById('step-' + step);
@@ -186,7 +196,7 @@ function goTo(step) {
       updateProgress();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 20);
-  }, 380);
+  }, 340);
 }
 
 function nextStep(step) {
@@ -227,10 +237,12 @@ function validateStep(step) {
 
   if (step === 2) {
     triageArea = radioVal('triage');
+    var trErr = document.getElementById('triage-error');
     if (!triageArea) {
-      var hint = document.getElementById('triage-error');
-      if (hint) hint.classList.add('visible');
+      if (trErr) trErr.classList.add('visible');
       ok = false;
+    } else {
+      if (trErr) trErr.classList.remove('visible');
     }
   }
 
