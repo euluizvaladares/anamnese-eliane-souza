@@ -157,68 +157,112 @@
 }
 
 /* ============================================================
-   TRIAGE CARDS (Step 2)
+   TRIAGE CARDS (Step 2) — horizontal list layout
+   Mobile:  1 column, full-width rows
+   Desktop: 2 columns, full-width rows
+   Icon bubble left · title + sub stacked right · no text cramping
 ============================================================ */
 .triage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
-@media (max-width: 300px) {
-  .triage-grid { grid-template-columns: 1fr; }
+/* 2-column grid from 560 px up */
+@media (min-width: 560px) {
+  .triage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
 }
 
-.triage-card { position: relative; cursor: pointer; }
-.triage-card input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+.triage-card {
+  position: relative;
+  cursor: pointer;
+  display: flex;           /* lets .triage-card-inner fill the grid cell */
+  flex-direction: column;
+}
 
+.triage-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Row: horizontal flex ── */
 .triage-card-inner {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 14px;
+  width: 100%;
+  flex: 1;                 /* equal-height rows within each grid row */
   background: var(--cream-card);
   border-radius: var(--radius-md);
-  padding: 16px 12px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition);
   border: 2px solid transparent;
-  text-align: center;
   cursor: pointer;
   user-select: none;
-  min-height: 108px;
 }
 
-.triage-card-inner:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.triage-card-inner:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
 
+/* Selected: left accent + tinted background */
 .triage-card input:checked + .triage-card-inner {
   border-color: var(--caramel);
   background: var(--caramel-pale);
   box-shadow: var(--shadow-md);
 }
 
+/* ── Icon bubble: inset square, centered emoji ── */
 .triage-icon {
-  font-size: 26px;
-  display: block;
-  margin-bottom: 8px;
-  line-height: 1;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: var(--cream);
+  box-shadow: var(--shadow-inset);
   flex-shrink: 0;
+  line-height: 1;
 }
+
+/* ── Text block: title + sub stacked, takes remaining space ── */
+.triage-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Title: dominant, strong ── */
 .triage-title {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-dark);
   line-height: 1.3;
-  margin-bottom: 5px;
-  display: block;
+  letter-spacing: -0.1px;
   overflow-wrap: break-word;
   word-break: break-word;
 }
+
+/* ── Sub: clearly secondary, never competes with title ── */
 .triage-sub {
-  font-size: 11px;
-  color: var(--text-light);
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--text-muted);
   line-height: 1.45;
-  display: block;
   overflow-wrap: break-word;
   word-break: break-word;
 }

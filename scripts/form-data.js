@@ -86,15 +86,15 @@ const SYMPTOM_SETS = {
     { id: 'fadiga-musc',   icon: '🔋', name: 'Fadiga muscular' },
   ],
   pele: [
-    { id: 'acne',       icon: '🔴', name: 'Acne' },
-    { id: 'pele-oleosa',icon: '💧', name: 'Pele oleosa' },
-    { id: 'pele-seca',  icon: '🏜️', name: 'Pele seca' },
-    { id: 'manchas',    icon: '🟤', name: 'Manchas/melasma' },
-    { id: 'rosacea',    icon: '🌹', name: 'Rosácea' },
-    { id: 'queda-cab',  icon: '✨', name: 'Queda de cabelo' },
-    { id: 'cab-fino',   icon: '🪮', name: 'Cabelo fino' },
-    { id: 'unhas',      icon: '💅', name: 'Unhas fracas' },
-    { id: 'psoriase',   icon: '🔵', name: 'Psoríase/eczema' },
+    { id: 'acne',       icon: '🔴', name: 'Acne' },            // red dot = blemish — kept
+    { id: 'pele-oleosa',icon: '✨', name: 'Pele oleosa' },      // shine = oily sheen (was 💧 water, wrong)
+    { id: 'pele-seca',  icon: '🌵', name: 'Pele seca' },       // cactus = dry/arid (was 🏜️ complex render)
+    { id: 'manchas',    icon: '🟤', name: 'Manchas/melasma' }, // brown dot = dark spot — kept
+    { id: 'rosacea',    icon: '😳', name: 'Rosácea' },         // flushed face = facial redness (was 🌹 rose, romantic)
+    { id: 'queda-cab',  icon: '🍂', name: 'Queda de cabelo' }, // falling leaves = shedding (was ✨ sparkles, wrong)
+    { id: 'cab-fino',   icon: '🌾', name: 'Cabelo fino' },     // grain strands = fine/sparse hair (was 🪮 pet comb)
+    { id: 'unhas',      icon: '🦴', name: 'Unhas fracas' },    // bone = brittleness (was 💅 beauty/manicure)
+    { id: 'psoriase',   icon: '🌡️', name: 'Psoríase/eczema' }, // thermometer = inflammation (was 🔵 meaningless dot)
   ],
   imunidade: [
     { id: 'gripes',        icon: '🤧', name: 'Gripes frequentes' },

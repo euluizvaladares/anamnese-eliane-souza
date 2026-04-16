@@ -32,8 +32,10 @@ function renderTriageCards() {
         '<input type="radio" name="triage" value="' + a.value + '" onchange="onTriageChange()">' +
         '<span class="triage-card-inner">' +
           '<span class="triage-icon">' + a.icon + '</span>' +
-          '<span class="triage-title">' + a.title + '</span>' +
-          '<span class="triage-sub">' + a.sub + '</span>' +
+          '<span class="triage-text">' +
+            '<span class="triage-title">' + a.title + '</span>' +
+            '<span class="triage-sub">' + a.sub + '</span>' +
+          '</span>' +
         '</span>' +
       '</label>'
     );
