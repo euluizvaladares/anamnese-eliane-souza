@@ -101,6 +101,10 @@ function toggleSymptom(id) {
 function setIntensity(event, id, level) {
   event.stopPropagation();
   var card = document.getElementById('sc-' + id);
+  // Auto-select the card when the user taps an intensity button
+  if (!card.classList.contains('selected')) {
+    card.classList.add('selected');
+  }
   card.querySelectorAll('.intensity-btn').forEach(function (b) { b.classList.remove('active'); });
   event.target.classList.add('active');
 }
@@ -165,11 +169,11 @@ function maskPhone(input) {
    PROGRESS BAR
 ============================================================ */
 function updateProgress() {
-  var pct = currentStep === 0 ? 0 : Math.round((currentStep / TOTAL_STEPS) * 100);
+  var pct = currentStep === 0 ? 0 : Math.min(Math.round((currentStep / TOTAL_STEPS) * 100), 100);
   document.getElementById('progress-bar').style.width = pct + '%';
   var label = document.getElementById('progress-label');
   if (label) {
-    label.textContent = currentStep > 0 ? currentStep + ' / ' + TOTAL_STEPS : '';
+    label.textContent = (currentStep > 0 && currentStep <= TOTAL_STEPS) ? currentStep + ' / ' + TOTAL_STEPS : '';
   }
 }
 
