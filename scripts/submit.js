@@ -3,7 +3,7 @@
    Eliane Souza Naturopata
 ============================================================ */
 
-var WEB3FORMS_KEY = '396f7445-3f53-4fa3-824c-920db9a57bad';
+var WEB3FORMS_KEY = 'ff4cf5ca-b233-493a-8fa0-593bc7ee12e3';
 
 function submitForm() {
   if (!validateStep(9)) return;
